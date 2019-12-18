@@ -10,6 +10,6 @@
         <CommandBinding Command="Open" CanExecute="OpenCommandBinding_CanExecute" Executed="OpenCommandBinding_Executed"/>
     </Window.CommandBindings>
     <Grid>
-    <controls:PdfViewer x:Name="PDF"/>
+        <controls:PdfViewer x:Name="PDF"/>
   </Grid>
 </Window>

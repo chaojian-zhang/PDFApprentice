@@ -24,14 +24,16 @@ namespace PDFApprentice.Controls
     public partial class Annotation : UserControl, INotifyPropertyChanged
     {
         #region Constructor
-        public Annotation(Entity entity, MainWindow mainWindow)
+        public Annotation(Entity entity)
         {
-            Window = mainWindow;
             Entity = entity;
             InitializeComponent();
         }
         public Entity Entity { get; }
-        public MainWindow Window { get; }
+        #endregion
+
+        #region View Properties
+        public string EntityContent { get => Entity.Content; }
         #endregion
 
         #region Data Binding

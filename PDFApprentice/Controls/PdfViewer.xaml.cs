@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PDFApprentice.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,6 +20,20 @@ using Windows.Storage.Streams;
 
 namespace PDFApprentice.Controls
 {
+    public class ImageTag
+    {
+        public PdfViewer Viewer;
+        public Canvas Canvas;
+        public uint PageID;
+
+        public ImageTag(PdfViewer viewer, uint pageID, Canvas canvas)
+        {
+            Viewer = viewer;
+            PageID = pageID;
+            Canvas = canvas;
+        }
+    }
+
     /// <summary>
     /// Interaction logic for PdfViewer.xaml
     /// </summary>
@@ -58,10 +73,45 @@ namespace PDFApprentice.Controls
             => InitializeComponent();
         #endregion
 
+        #region Private Properties
+        ImageTag LastImage { get; set; }
+        #endregion
+
+        #region Events
+        private static void Image_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            Image image = sender as Image;
+            if(image != null)
+            {
+                ImageTag tag = image.Tag as ImageTag;
+                tag.Viewer.LastImage = tag;
+            }
+        }
+        private void PdfViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if(LastImage != null)
+            {
+                // Get potision
+                Canvas canvas = LastImage.Canvas;
+                // Create entity
+                Entity entity = new Entity()
+                {
+                    Content = "Test"
+                };
+                Annotation annotation = new Annotation(entity);
+                // Add annotation to canvas
+                Point position = e.GetPosition(canvas);
+                annotation.SetValue(Canvas.LeftProperty, position.X);
+                annotation.SetValue(Canvas.TopProperty, position.Y);
+                canvas.Children.Add(annotation);
+            }
+        }
+        #endregion
+
         #region Subroutine
         private async static Task PdfToImages(PdfViewer pdfViewer, PdfDocument pdfDoc)
         {
-            var items = pdfViewer.PagesContainer.Items;
+            ItemCollection items = pdfViewer.PagesContainer.Items;
             items.Clear();
 
             if (pdfDoc == null) return;
@@ -71,22 +121,35 @@ namespace PDFApprentice.Controls
                 using (var page = pdfDoc.GetPage(i))
                 {
                     var bitmap = await PageToBitmapAsync(page);
+                    // Create containing canvas element
+                    var canvas = new Canvas()
+                    {
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(0, 4, 0, 4),
+                        MaxWidth = 800,
+                        Width = bitmap.PixelWidth,
+                        Height = bitmap.PixelHeight
+                    };
+                    // Create image elements
                     var image = new Image
                     {
                         Source = bitmap,
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        Margin = new Thickness(0, 4, 0, 4),
-                        MaxWidth = 800
+                        Tag = new ImageTag(pdfViewer, i, canvas), // Tag page number
                     };
-                    items.Add(image);
+                    image.MouseDown += Image_MouseDown;
+                    // Add image to canvas
+                    canvas.Children.Add(image);
+                    // Add canvas
+                    items.Add(canvas);
                 }
             }
         }
+
         private static async Task<BitmapImage> PageToBitmapAsync(PdfPage page)
         {
             BitmapImage image = new BitmapImage();
 
-            using (var stream = new InMemoryRandomAccessStream())
+            using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
             {
                 await page.RenderToStreamAsync(stream);
 

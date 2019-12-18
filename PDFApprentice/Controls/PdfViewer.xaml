@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PDFApprentice.Controls"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" MouseDoubleClick="PdfViewer_MouseDoubleClick"
              d:DesignHeight="300" d:DesignWidth="300">
-  <ScrollViewer PanningMode="Both"
+    <ScrollViewer PanningMode="Both"
                 Background="DarkGray">
-    <ItemsControl x:Name="PagesContainer"/>
-  </ScrollViewer>
+        <ItemsControl x:Name="PagesContainer"/>
+    </ScrollViewer>
 </UserControl>
