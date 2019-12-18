@@ -1,7 +1,7 @@
-﻿<Application x:Class="WPF_PDFDocument.App"
+﻿<Application x:Class="PDFApprentice.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:WPF_PDFDocument"
+             xmlns:local="clr-namespace:PDFApprentice"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          

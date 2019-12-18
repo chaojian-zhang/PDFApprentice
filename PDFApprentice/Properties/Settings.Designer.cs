@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace WPF_PDFDocument.Properties
+namespace PDFApprentice.Properties
 {
 
 

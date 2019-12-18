@@ -17,7 +17,7 @@ using Windows.Data.Pdf;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace WPF_PDFDocument.Controls
+namespace PDFApprentice.Controls
 {
   /// <summary>
   /// Interaction logic for PdfViewer.xaml
