@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,14 +16,31 @@ using System.Windows.Shapes;
 
 namespace PDFApprentice
 {
-  /// <summary>
-  /// Interaction logic for MainWindow.xaml
-  /// </summary>
-  public partial class MainWindow : Window
-  {
-    public MainWindow()
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
     {
-      InitializeComponent();
+        #region Constructor
+        public MainWindow()
+        {
+            InitializeComponent();
+        }
+        #endregion
+
+        #region Events
+        private void OpenCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+            => e.CanExecute = true;
+        private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
+            if(dialog.ShowDialog() == true)
+            {
+                string filePath = dialog.FileName;
+                PDF.PdfPath = filePath;
+            }
+        }
+        #endregion
     }
-  }
 }

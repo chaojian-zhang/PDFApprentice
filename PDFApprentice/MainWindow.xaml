@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:PDFApprentice.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="PDF Apprentice" Height="350" Width="525">
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" CanExecute="OpenCommandBinding_CanExecute" Executed="OpenCommandBinding_Executed"/>
+    </Window.CommandBindings>
     <Grid>
-    <controls:PdfViewer PdfPath="Assets/vr50hd_manual.pdf"/>
+    <controls:PdfViewer x:Name="PDF"/>
   </Grid>
 </Window>
