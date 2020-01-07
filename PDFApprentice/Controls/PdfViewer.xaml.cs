@@ -76,19 +76,30 @@ namespace PDFApprentice.Controls
                 // Making sure it's an absolute path
                 var path = System.IO.Path.GetFullPath(pdfDrawer.PdfPath);
 
+                // Get file
                 StorageFile.GetFileFromPathAsync(path).AsTask()
                   // Load pdf document on background thread
                   .ContinueWith(t => PdfDocument.LoadFromFileAsync(t.Result).AsTask()).Unwrap()
                   // Display on UI Thread
                   .ContinueWith(t2 => PdfToImages(pdfDrawer, t2.Result), TaskScheduler.FromCurrentSynchronizationContext());
+
+                // Automatically load annotations
+                // TODO: ...
             }
         }
         #endregion
 
         #region Constructor
         public PdfViewer()
-            => InitializeComponent();
+        {
+            InitializeComponent();
+            Annotations = new List<Annotation>();
+        }
         public AnnotationProperty PropertyWindow { get; set; }
+        #endregion
+
+        #region Annotation Collection
+        public List<Annotation> Annotations { get; set; }
         #endregion
 
         #region Private Properties
@@ -102,6 +113,13 @@ namespace PDFApprentice.Controls
         public void Save()
         {
             throw new NotImplementedException();
+        }
+        internal void DeleteAnnotation(Annotation annotation)
+        {
+            // Delete from canvas
+            annotation.Canvas.Children.Remove(annotation);
+            // Delete from collection
+            Annotations.Remove(annotation);
         }
         #endregion
 
@@ -128,19 +146,27 @@ namespace PDFApprentice.Controls
                 // Get potision
                 Canvas canvas = CurrentImage.Canvas;
                 // Create annotation
+                var position = e.GetPosition(canvas);
                 Entity entity = new Entity()
                 {
-                    Content = "Test"
+                    Content = "New Note",
+                    Location = new Location()
+                    {
+                        X = (int)position.X,
+                        Y = (int)position.Y
+                    },
+                    OwnerPage = CurrentImage.PageID
                 };
-                Annotation annotation = new Annotation(entity);
+                Annotation annotation = new Annotation(canvas, entity);
                 annotation.MouseDown += ShowAnnotationProperty;
                 // Add annotation to canvas
-                Point position = e.GetPosition(canvas);
                 annotation.SetValue(Canvas.LeftProperty, position.X);
                 annotation.SetValue(Canvas.TopProperty, position.Y);
                 canvas.Children.Add(annotation);
                 // Show annotation property
                 ShowAnnotationProperty(annotation, null);
+                // Add annotation to collection
+                Annotations.Add(annotation);
             }
         }
 
@@ -150,6 +176,7 @@ namespace PDFApprentice.Controls
             {
                 PropertyWindow.SetAnnotation(sender as Annotation);
                 PropertyWindow.Show();
+                PropertyWindow.Owner = Window.GetWindow(this);
             }
         }
         #endregion

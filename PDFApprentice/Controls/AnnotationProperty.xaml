@@ -18,12 +18,13 @@
         </DockPanel>
         <DockPanel>
             <Label Content="Note:"/>
-            <TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAnnotationAvailable}"/>
+            <TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAnnotationAvailable}"
+                     AcceptsReturn="True" AcceptsTab="True" Height="250"/>
         </DockPanel>
         <DockPanel>
             <Label Content="Tags:"/>
             <TextBox Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAnnotationAvailable}"/>
         </DockPanel>
-        <Button Content="Delete" Click="DeleteButton_Click"/>
+        <Button Content="Delete" Click="DeleteButton_Click"  IsEnabled="{Binding IsAnnotationAvailable}"/>
     </StackPanel>
 </Window>

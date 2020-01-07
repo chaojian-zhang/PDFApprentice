@@ -26,7 +26,7 @@ namespace PDFApprentice
         public MainWindow()
         {
             InitializeComponent();
-            PropertyWindow = new AnnotationProperty();
+            PropertyWindow = new AnnotationProperty(PDF);
             PDF.PropertyWindow = PropertyWindow;
         }
         private AnnotationProperty PropertyWindow { get; }

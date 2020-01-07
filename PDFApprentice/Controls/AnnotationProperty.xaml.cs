@@ -22,10 +22,12 @@ namespace PDFApprentice.Controls
     public partial class AnnotationProperty : Window, INotifyPropertyChanged
     {
         #region Constructor
-        public AnnotationProperty()
+        public AnnotationProperty(PdfViewer viewer)
         {
             InitializeComponent();
+            Viewer = viewer;
         }
+        private PdfViewer Viewer { get; set; }
         #endregion
 
         #region Method
@@ -62,7 +64,11 @@ namespace PDFApprentice.Controls
         }
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-
+            if(Annotation != null)
+            {
+                Viewer.DeleteAnnotation(Annotation);
+                SetAnnotation(null);
+            }
         }
         #endregion
 

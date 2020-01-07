@@ -17,6 +17,6 @@ namespace PDFApprentice.Data
         public string Content;
         public string Tags;
         public Location Location;
-        public int OwnerPage;
+        public uint OwnerPage;
     }
 }

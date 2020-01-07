@@ -24,11 +24,19 @@ namespace PDFApprentice.Controls
     public partial class Annotation : UserControl, INotifyPropertyChanged
     {
         #region Constructor
-        public Annotation(Entity entity)
+        public Annotation(Canvas canvas, Entity entity)
         {
             Entity = entity;
+            Canvas = canvas;
             InitializeComponent();
         }
+        /// <summary>
+        /// Containing canvas, which hosts the pdf page image and annotations on that page
+        /// </summary>
+        public Canvas Canvas;
+        /// <summary>
+        /// Contained note entity in this annotation representation
+        /// </summary>
         private Entity Entity { get; }
         #endregion
 
