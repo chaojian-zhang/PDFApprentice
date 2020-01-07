@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Windows.Data.Pdf;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using YamlDotNet.Serialization;
 
 namespace PDFApprentice.Controls
 {
@@ -82,9 +83,6 @@ namespace PDFApprentice.Controls
                   .ContinueWith(t => PdfDocument.LoadFromFileAsync(t.Result).AsTask()).Unwrap()
                   // Display on UI Thread
                   .ContinueWith(t2 => PdfToImages(pdfDrawer, t2.Result), TaskScheduler.FromCurrentSynchronizationContext());
-
-                // Automatically load annotations
-                // TODO: ...
             }
         }
         #endregion
@@ -110,9 +108,25 @@ namespace PDFApprentice.Controls
         #endregion
 
         #region Interface
+        private const string PDFApprenticeFileSuffix = ".papr";
         public void Save()
         {
-            throw new NotImplementedException();
+            // Generate path
+            string savePath = GetSavePath();
+            // Preprocess line ending
+            foreach (Annotation annoation in Annotations)
+            {
+                Entity entity = annoation.GetEntity();
+                entity.Content = entity.Content.Replace(Environment.NewLine, "\n");
+            }
+            // Sort in page order
+            List<Entity> entitiesSorted = Annotations.Select(a => a.GetEntity())
+                .OrderBy(e => e.OwnerPage).ToList();
+            // Generate serialized text
+            Serializer serializer = new YamlDotNet.Serialization.Serializer();
+            string serialization = serializer.Serialize(entitiesSorted);
+            // Save 
+            File.WriteAllText(savePath, serialization);
         }
         internal void DeleteAnnotation(Annotation annotation)
         {
@@ -157,19 +171,13 @@ namespace PDFApprentice.Controls
                     },
                     OwnerPage = CurrentImage.PageID
                 };
-                Annotation annotation = new Annotation(canvas, entity);
-                annotation.MouseDown += ShowAnnotationProperty;
-                // Add annotation to canvas
-                annotation.SetValue(Canvas.LeftProperty, position.X);
-                annotation.SetValue(Canvas.TopProperty, position.Y);
-                canvas.Children.Add(annotation);
+                var annotation = CreateAnnotation(canvas, entity);
                 // Show annotation property
                 ShowAnnotationProperty(annotation, null);
-                // Add annotation to collection
-                Annotations.Add(annotation);
+                // Indicate file unsaved
+                (Window.GetWindow(this) as MainWindow).UpdateSaveStatus(MainWindow.SaveStatus.Unsaved);
             }
         }
-
         private void ShowAnnotationProperty(object sender, MouseButtonEventArgs e)
         {
             if(PropertyWindow != null && sender is Annotation)
@@ -216,6 +224,28 @@ namespace PDFApprentice.Controls
                     items.Add(canvas);
                 }
             }
+
+            // Automaticaly load annotations
+            LoadExistingAnnotations(pdfViewer);
+        }
+        private static void LoadExistingAnnotations(PdfViewer pdfViewer)
+        {
+            if(pdfViewer.PdfPath != null)
+            {
+                string savePath = pdfViewer.GetSavePath();
+                if (File.Exists(savePath))
+                {
+                    string yaml = File.ReadAllText(savePath);
+                    List<Entity> entities = new Deserializer().Deserialize<List<Entity>>(yaml);
+
+                    // Create annotation for each entity
+                    foreach (var entity in entities)
+                    {
+                        Canvas canvas = pdfViewer.PagesContainer.Items.GetItemAt((int)(entity.OwnerPage)) as Canvas;
+                        pdfViewer.CreateAnnotation(canvas, entity);
+                    }
+                }
+            }
         }
         private static async Task<BitmapImage> PageToBitmapAsync(PdfPage page)
         {
@@ -232,6 +262,29 @@ namespace PDFApprentice.Controls
             }
 
             return image;
+        }
+        private string GetSavePath()
+        {
+            string folderPath = System.IO.Path.GetDirectoryName(PdfPath);
+            string fileName = System.IO.Path.GetFileNameWithoutExtension(PdfPath) + PDFApprenticeFileSuffix;
+            string savePath = System.IO.Path.Combine(folderPath, fileName);
+            return savePath;
+        }
+        /// <summary>
+        /// Create a new annotation and add it to the viewer
+        /// </summary>
+        /// <param name="canvas">The canvas the annotation belongs to</param>
+        private Annotation CreateAnnotation(Canvas canvas, Entity entity)
+        {
+            Annotation annotation = new Annotation(canvas, entity);
+            annotation.MouseDown += ShowAnnotationProperty;
+            // Add annotation to canvas
+            annotation.SetValue(Canvas.LeftProperty, (double)entity.Location.X);
+            annotation.SetValue(Canvas.TopProperty, (double)entity.Location.Y);
+            canvas.Children.Add(annotation);
+            // Add annotation to collection
+            Annotations.Add(annotation);
+            return annotation;
         }
         #endregion
     }

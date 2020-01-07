@@ -32,6 +32,30 @@ namespace PDFApprentice
         private AnnotationProperty PropertyWindow { get; }
         #endregion
 
+        #region Methods
+        public enum SaveStatus
+        {
+            Saved,
+            Unsaved
+        }
+        internal void UpdateSaveStatus(SaveStatus status)
+        {
+            if (PDF.PdfPath == null)
+                return;
+            switch (status)
+            {
+                case SaveStatus.Saved:
+                    Title = System.IO.Path.GetFileNameWithoutExtension(PDF.PdfPath);
+                    break;
+                case SaveStatus.Unsaved:
+                    Title = System.IO.Path.GetFileNameWithoutExtension(PDF.PdfPath) + "*";
+                    break;
+                default:
+                    break;
+            }
+        }
+        #endregion
+
         #region Events
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -42,6 +66,7 @@ namespace PDFApprentice
             => e.CanExecute = true;
         private void OpenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            // Select and open file
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
             if(dialog.ShowDialog() == true)
@@ -49,6 +74,8 @@ namespace PDFApprentice
                 string filePath = dialog.FileName;
                 PDF.PdfPath = filePath;
             }
+            // Update title
+            UpdateSaveStatus(SaveStatus.Saved);
         }
         private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
             => e.CanExecute = PDF.PdfPath != null;
@@ -60,13 +87,6 @@ namespace PDFApprentice
             => this.Close();
         private void ExitCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
             => e.CanExecute = true;
-        private void ExportCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-            => e.CanExecute =  PDF.PdfPath != null;
-
-        private void ExportCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-        {
-
-        }
 
         private void StatisticsCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {

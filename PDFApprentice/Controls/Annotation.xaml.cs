@@ -46,6 +46,11 @@ namespace PDFApprentice.Controls
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Used for serializatoin
+        /// </summary>
+        internal Entity GetEntity()
+            => Entity;
         internal Location GetLocation()
             => Entity.Location;
         internal void UpdateLocation(int x, int y)
