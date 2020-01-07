@@ -18,7 +18,6 @@ None.
 
 1. Allow arbitary taggable page-level Ink Canvas to be associated with each page (for **highlight**, sketch and draft purpose, not for annotation purpose per-se, thus the whole thing is managed as a single entity).
 2. (Usability) Add configuration to configure next-open image size (mostly width); Also we might need horizontal scroll bar for items container
-3. (UI) Don't show Annotation Properties window in Taskbar
 4. (UI) Annotation property window notes text input should have a max width so horizontal scroll bar can show;
 5. (UI) Add deliberate max width to annotation widget (e.g. 500 px).
 
@@ -26,9 +25,10 @@ None.
 
 1. (Basic function) Allow adding text annotations as an **entity**, each entity for now just need to contain *content*, along side optional *tags* string (*notice we don't have the concept of a **title** because it's dumb and better used as a tag if really really needed*). Entities contain **location information** and it's relative to **owner page** (subject to PDF page image resolution difference but that's as good as we can do). Pages are identified by **page ID**, starting from *0*, for a particular document.
 	* (Implementation) Entities on page are only for display purpose, it's edited in seperate window.
-2. (Improvement, bug fix) When save windows title is not updating save status (the `*` is still present) 
-3. (Bug fix) Clear annoations list when loading new file
+2. (Improvement, bug fix) When save windows title is not updating save status (the `*` is still present).
+3. (Bug fix) Clear annoations list when loading new file.
 4. (Export, format) Export into Knowledge Markdown plain text.
+5. (UI) Don't show Annotation Properties window in Taskbar.
 
 # Terminology
 
