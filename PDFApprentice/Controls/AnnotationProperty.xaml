@@ -1,0 +1,29 @@
+﻿<Window x:Class="PDFApprentice.Controls.AnnotationProperty"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PDFApprentice.Controls"
+        mc:Ignorable="d" Closing="Window_Closing" MinWidth="150" WindowStartupLocation="CenterScreen"
+        Title="Annotation Property" SizeToContent="WidthAndHeight"
+        DataContext="{Binding RelativeSource={RelativeSource self}}">
+    <StackPanel MaxHeight="1024">
+        <DockPanel>
+            <Label Content="X:"/>
+            <TextBox Text="{Binding X, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAnnotationAvailable}"/>
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Y:"/>
+            <TextBox Text="{Binding Y, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAnnotationAvailable}"/>
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Note:"/>
+            <TextBox Text="{Binding Note, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAnnotationAvailable}"/>
+        </DockPanel>
+        <DockPanel>
+            <Label Content="Tags:"/>
+            <TextBox Text="{Binding Tags, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsAnnotationAvailable}"/>
+        </DockPanel>
+        <Button Content="Delete" Click="DeleteButton_Click"/>
+    </StackPanel>
+</Window>

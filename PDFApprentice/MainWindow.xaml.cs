@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using PDFApprentice.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,13 +26,21 @@ namespace PDFApprentice
         public MainWindow()
         {
             InitializeComponent();
+            PropertyWindow = new AnnotationProperty();
+            PDF.PropertyWindow = PropertyWindow;
         }
+        private AnnotationProperty PropertyWindow { get; }
         #endregion
 
         #region Events
-        private void OpenCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            PropertyWindow.ShouldReallyClose = true;
+            PropertyWindow.Close();
+        }
+        private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
             => e.CanExecute = true;
-        private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void OpenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
@@ -41,6 +50,31 @@ namespace PDFApprentice
                 PDF.PdfPath = filePath;
             }
         }
+        private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+            => e.CanExecute = PDF.PdfPath != null;
+
+        private void SaveCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+            => PDF.Save();
+
+        private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+            => this.Close();
+        private void ExitCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+            => e.CanExecute = true;
+        private void ExportCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+            => e.CanExecute =  PDF.PdfPath != null;
+
+        private void ExportCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
+
+        private void StatisticsCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+
+        }
+
+        private void StatisticsCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+            => e.CanExecute = PDF.PdfPath != null;
         #endregion
     }
 }

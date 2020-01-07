@@ -29,11 +29,32 @@ namespace PDFApprentice.Controls
             Entity = entity;
             InitializeComponent();
         }
-        public Entity Entity { get; }
+        private Entity Entity { get; }
         #endregion
 
         #region View Properties
-        public string EntityContent { get => Entity.Content; }
+        public string Note { get => Entity.Content; set { Entity.Content = value; NotifyPropertyChanged(); } }
+        public string Tags { get => Entity.Tags; set { Entity.Tags = value; NotifyPropertyChanged(); } }
+        #endregion
+
+        #region Methods
+        internal Location GetLocation()
+            => Entity.Location;
+        internal void UpdateLocation(int x, int y)
+        {
+            Entity.Location.X = x;
+            Entity.Location.Y = y;
+            Canvas.SetLeft(this, x);
+            Canvas.SetTop(this, y);
+        }
+        internal string GetContent()
+            => Entity.Content;
+        internal void UpdateTags(string tags)
+            => Tags = tags;
+        internal string GetTags()
+            => Entity.Tags;
+        internal void UpdateNote(string note)
+            => Note = note;
         #endregion
 
         #region Data Binding

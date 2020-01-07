@@ -20,10 +20,22 @@ using Windows.Storage.Streams;
 
 namespace PDFApprentice.Controls
 {
+    /// <summary>
+    /// A tag object for PDF rendered page images containing identifying information for the page
+    /// </summary>
     public class ImageTag
     {
+        /// <summary>
+        /// Reference to the PDF viewer container
+        /// </summary>
         public PdfViewer Viewer;
+        /// <summary>
+        /// Reference to the presenting canvas
+        /// </summary>
         public Canvas Canvas;
+        /// <summary>
+        /// Page number
+        /// </summary>
         public uint PageID;
 
         public ImageTag(PdfViewer viewer, uint pageID, Canvas canvas)
@@ -39,17 +51,22 @@ namespace PDFApprentice.Controls
     /// </summary>
     public partial class PdfViewer : UserControl
     {
-        #region Bindable Properties
+        #region Bindable Dependency Properties
+        /// <summary>
+        /// Path of the PDF file being opened
+        /// </summary>
         public string PdfPath
         {
             get { return (string)GetValue(PdfPathProperty); }
             set { SetValue(PdfPathProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for PdfPath.  This enables animation, styling, binding, etc...
+        /// <remarks>Using a DependencyProperty as the backing store for PdfPath.  This enables animation, styling, binding, etc...</remarks>
         public static readonly DependencyProperty PdfPathProperty =
             DependencyProperty.Register("PdfPath", typeof(string), typeof(PdfViewer), new PropertyMetadata(null, propertyChangedCallback: OnPdfPathChanged));
-
+        /// <summary>
+        /// Callback when pdf path is updated
+        /// </summary>
         private static void OnPdfPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var pdfDrawer = (PdfViewer)d;
@@ -71,39 +88,68 @@ namespace PDFApprentice.Controls
         #region Constructor
         public PdfViewer()
             => InitializeComponent();
+        public AnnotationProperty PropertyWindow { get; set; }
         #endregion
 
         #region Private Properties
-        ImageTag LastImage { get; set; }
+        /// <summary>
+        /// A reference to the current image being clicked on
+        /// </summary>
+        ImageTag CurrentImage { get; set; }
+        #endregion
+
+        #region Interface
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
 
         #region Events
+        /// <summary>
+        /// Image object callback, registers self to the viewer as current image being clicked on
+        /// </summary>
         private static void Image_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Image image = sender as Image;
             if(image != null)
             {
                 ImageTag tag = image.Tag as ImageTag;
-                tag.Viewer.LastImage = tag;
+                tag.Viewer.CurrentImage = tag;
             }
         }
+        /// <summary>
+        /// Handles creating new notes
+        /// </summary>
         private void PdfViewer_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if(LastImage != null)
+            if(CurrentImage != null)
             {
                 // Get potision
-                Canvas canvas = LastImage.Canvas;
-                // Create entity
+                Canvas canvas = CurrentImage.Canvas;
+                // Create annotation
                 Entity entity = new Entity()
                 {
                     Content = "Test"
                 };
                 Annotation annotation = new Annotation(entity);
+                annotation.MouseDown += ShowAnnotationProperty;
                 // Add annotation to canvas
                 Point position = e.GetPosition(canvas);
                 annotation.SetValue(Canvas.LeftProperty, position.X);
                 annotation.SetValue(Canvas.TopProperty, position.Y);
                 canvas.Children.Add(annotation);
+                // Show annotation property
+                ShowAnnotationProperty(annotation, null);
+            }
+        }
+
+        private void ShowAnnotationProperty(object sender, MouseButtonEventArgs e)
+        {
+            if(PropertyWindow != null && sender is Annotation)
+            {
+                PropertyWindow.SetAnnotation(sender as Annotation);
+                PropertyWindow.Show();
             }
         }
         #endregion
@@ -144,7 +190,6 @@ namespace PDFApprentice.Controls
                 }
             }
         }
-
         private static async Task<BitmapImage> PageToBitmapAsync(PdfPage page)
         {
             BitmapImage image = new BitmapImage();

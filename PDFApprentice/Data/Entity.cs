@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PDFApprentice.Data
 {
-    public class Location
+    public struct Location
     {
         public int X;
         public int Y;
@@ -16,7 +16,6 @@ namespace PDFApprentice.Data
     {
         public string Content;
         public string Tags;
-        public string Title;
         public Location Location;
         public int OwnerPage;
     }

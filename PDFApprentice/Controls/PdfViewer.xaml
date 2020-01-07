@@ -8,6 +8,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <ScrollViewer PanningMode="Both"
                 Background="DarkGray">
-        <ItemsControl x:Name="PagesContainer"/>
-    </ScrollViewer>
+            <ItemsControl x:Name="PagesContainer"/>
+        </ScrollViewer>
 </UserControl>
