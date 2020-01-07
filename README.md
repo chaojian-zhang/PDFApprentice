@@ -37,3 +37,7 @@ Due to difference in Windows SDK installation paths new checkouts need to setup 
 2. *C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\\.NETCore\v4.5\System.Runtime.WindowsRuntime.dll*
 
 Additional details is available in Lander Verhack's [post](https://blogs.u2u.be/lander/post/2018/01/23/Creating-a-PDF-Viewer-in-WPF-using-Windows-10-APIs).
+
+# Icon Credit
+
+<div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
