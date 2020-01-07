@@ -141,7 +141,9 @@ namespace PDFApprentice
         private void ExportCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
             // Generate file path
-            var exportPath = GetPDFName() + ".md"; // It's markdown format plain text
+            var folderPath = System.IO.Path.GetDirectoryName(PDF.PdfPath);
+            var exportName = GetPDFName() + ".md"; // It's markdown format plain text
+            var exportPath = System.IO.Path.Combine(folderPath, exportName);
             // Generate content
             StringBuilder builder = new StringBuilder($"# {GetPDFName()}\n\n");
             foreach (Entity entity in PDF.Annotations
