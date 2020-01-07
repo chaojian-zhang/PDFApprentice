@@ -4,9 +4,15 @@ Uses **Windows 10 APIs** to render a PDF Document as **image** in WPF, planned t
 
 This program serves one single purpose: provides a **simple way** to add annotations to PDFs and allow **data interoperation**, as such it doesn't intend to have any heavy-weight functionalities. The annotations are saved as an external metadata file with the same name as the PDF in YAML format; It supports direct export to KMD format. This program can be used as part of a process along the *personal note/data management pipeline*.
 
+# Screenshot
+
+![Screenshot of Interface](Documentations/Screenshot_of_Interface.png)
+
 # Task List
 
 **Current**
+
+None.
 
 **Future Features**
 
