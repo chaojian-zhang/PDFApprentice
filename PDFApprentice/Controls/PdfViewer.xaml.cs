@@ -77,6 +77,9 @@ namespace PDFApprentice.Controls
                 // Making sure it's an absolute path
                 var path = System.IO.Path.GetFullPath(pdfDrawer.PdfPath);
 
+                // Clear annotations list
+                pdfDrawer.Annotations = new List<Annotation>();
+
                 // Get file
                 StorageFile.GetFileFromPathAsync(path).AsTask()
                   // Load pdf document on background thread
@@ -89,10 +92,7 @@ namespace PDFApprentice.Controls
 
         #region Constructor
         public PdfViewer()
-        {
-            InitializeComponent();
-            Annotations = new List<Annotation>();
-        }
+            => InitializeComponent();
         public AnnotationProperty PropertyWindow { get; set; }
         #endregion
 

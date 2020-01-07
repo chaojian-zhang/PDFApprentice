@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PDFApprentice.Controls"
         mc:Ignorable="d" Closing="Window_Closing" MinWidth="150" WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
         Title="Annotation Property" SizeToContent="WidthAndHeight"
         DataContext="{Binding RelativeSource={RelativeSource self}}">
     <StackPanel MaxHeight="1024">

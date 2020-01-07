@@ -1,7 +1,9 @@
 ﻿using Microsoft.Win32;
 using PDFApprentice.Controls;
+using PDFApprentice.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,6 +35,7 @@ namespace PDFApprentice
         #endregion
 
         #region Methods
+        private SaveStatus CurrentSaveStatus { get; set; }
         public enum SaveStatus
         {
             Saved,
@@ -45,7 +48,7 @@ namespace PDFApprentice
             switch (status)
             {
                 case SaveStatus.Saved:
-                    Title = System.IO.Path.GetFileNameWithoutExtension(PDF.PdfPath);
+                    Title = GetPDFName();
                     break;
                 case SaveStatus.Unsaved:
                     Title = System.IO.Path.GetFileNameWithoutExtension(PDF.PdfPath) + "*";
@@ -53,12 +56,30 @@ namespace PDFApprentice
                 default:
                     break;
             }
+            CurrentSaveStatus = status;
         }
         #endregion
 
         #region Events
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            // Show warning of unsaved progress
+            if (CurrentSaveStatus == SaveStatus.Unsaved)
+            {
+                var result = MessageBox.Show("There are unsaved annotations. Would you like to make a save first?\n" +
+                    "Click Yes to save before exit, \n" +
+                    "Click No to discard unsaved annotations, \n" +
+                    "Click Cancel to cancel exiting.",
+                    "Confirmation", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+                if (result == MessageBoxResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+                else if (result == MessageBoxResult.Yes)
+                    SaveCommand_Executed(null, null);
+            }
+            // Close all windows
             PropertyWindow.ShouldReallyClose = true;
             PropertyWindow.Close();
         }
@@ -66,23 +87,39 @@ namespace PDFApprentice
             => e.CanExecute = true;
         private void OpenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
+            // Show warning of unsaved progress
+            if (CurrentSaveStatus == SaveStatus.Unsaved)
+            {
+                var result = MessageBox.Show("There are unsaved annotations. Would you like to make a save first?\n" +
+                    "Click Yes to save before open new file, \n" +
+                    "Click No to discard unsaved annotations, \n" +
+                    "Click Cancel to cancel opening.",
+                    "Confirmation", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+                if (result == MessageBoxResult.Cancel)
+                    return;
+                else if (result == MessageBoxResult.Yes)
+                    SaveCommand_Executed(null, null);
+            }
+
             // Select and open file
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
-            if(dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() == true)
             {
                 string filePath = dialog.FileName;
                 PDF.PdfPath = filePath;
             }
-            // Update title
+            // Update title through save status (as a side effect)
             UpdateSaveStatus(SaveStatus.Saved);
         }
         private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-            => e.CanExecute = PDF.PdfPath != null;
+            => e.CanExecute = IsPDFAvailable();
 
         private void SaveCommand_Executed(object sender, ExecutedRoutedEventArgs e)
-            => PDF.Save();
-
+        {
+            PDF.Save();
+            UpdateSaveStatus(SaveStatus.Saved);
+        }
         private void ExitCommand_Executed(object sender, ExecutedRoutedEventArgs e)
             => this.Close();
         private void ExitCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -90,11 +127,43 @@ namespace PDFApprentice
 
         private void StatisticsCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-
+            MessageBox.Show(
+                $"Title: {GetPDFName()}\n" +
+                $"Pages: {PDF.PagesContainer.Items.Count}\n" +
+                $"Annotations: {PDF.Annotations.Count}",
+                "Annotation Statistics", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void StatisticsCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-            => e.CanExecute = PDF.PdfPath != null;
+            => e.CanExecute = IsPDFAvailable();
+        private void ExportCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+            => e.CanExecute = IsPDFAvailable();
+        private void ExportCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            // Generate file path
+            var exportPath = GetPDFName() + ".md"; // It's markdown format plain text
+            // Generate content
+            StringBuilder builder = new StringBuilder($"# {GetPDFName()}\n\n");
+            foreach (Entity entity in PDF.Annotations
+                .Select(a => a.GetEntity())
+                .OrderBy(en => en.OwnerPage))
+            {
+                // Concatenate lines with a single space
+                string content = entity.Content.Replace(Environment.NewLine, " ");
+                builder.AppendLine($"* {(string.IsNullOrWhiteSpace(entity.Tags) ? string.Empty : $"({entity.Tags}) ")}{content}");
+            }
+            // Save
+            File.WriteAllText(exportPath, builder.ToString());
+            // Open export file
+            System.Diagnostics.Process.Start(exportPath);
+        }
+        #endregion
+
+        #region Subroutine
+        private bool IsPDFAvailable()
+            => PDF.PdfPath != null;
+        private string GetPDFName()
+            => System.IO.Path.GetFileNameWithoutExtension(PDF.PdfPath);
         #endregion
     }
 }
