@@ -1,8 +1,10 @@
 ﻿using PDFApprentice.Data;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -50,7 +52,7 @@ namespace PDFApprentice.Controls
     /// <summary>
     /// Interaction logic for PdfViewer.xaml
     /// </summary>
-    public partial class PdfViewer : UserControl
+    public partial class PdfViewer : UserControl, INotifyPropertyChanged
     {
         #region Bindable Dependency Properties
         /// <summary>
@@ -96,6 +98,13 @@ namespace PDFApprentice.Controls
         public AnnotationProperty PropertyWindow { get; set; }
         #endregion
 
+        #region View Properties
+        private const double MinScale = 1.0;
+        private const double MaxScale = 3.0;
+        private double _Scale = 1.0;
+        public double Scale { get => _Scale; set => SetField(ref _Scale, value); }
+        #endregion
+
         #region Annotation Collection
         public List<Annotation> Annotations { get; set; }
         #endregion
@@ -138,6 +147,31 @@ namespace PDFApprentice.Controls
         #endregion
 
         #region Events
+        private void UserControl_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            // Scroll scale
+            double scaleSpeed = 1.5;
+            if (PdfPath != null && Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                int direction = e.Delta > 0 ? 1 : -1;
+                if (direction == 1)
+                {
+                    double portion = (double)(MaxScale - Scale) / (MaxScale - MinScale);
+                    Scale += Math.Pow(portion, scaleSpeed);
+                }
+                else
+                {
+                    double portion = (double)(Scale - MinScale) / (MaxScale - MinScale);
+                    Scale -= Math.Pow(portion, scaleSpeed);
+                }
+                // Clamp
+                if (Scale > MaxScale)
+                    Scale = MaxScale;
+                else if (Scale < MinScale)
+                    Scale = MinScale;
+                e.Handled = true;
+            }
+        }
         /// <summary>
         /// Image object callback, registers self to the viewer as current image being clicked on
         /// </summary>
@@ -285,6 +319,19 @@ namespace PDFApprentice.Controls
             // Add annotation to collection
             Annotations.Add(annotation);
             return annotation;
+        }
+        #endregion
+
+        #region Data Binding
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void NotifyPropertyChanged([CallerMemberName]string propertyName = null)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        protected bool SetField<type>(ref type field, type value, [CallerMemberName]string propertyName = null)
+        {
+            if (EqualityComparer<type>.Default.Equals(field, value)) return false;
+            field = value;
+            NotifyPropertyChanged(propertyName);
+            return true;
         }
         #endregion
     }

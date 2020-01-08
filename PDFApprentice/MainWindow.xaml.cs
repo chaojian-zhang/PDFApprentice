@@ -111,6 +111,8 @@ namespace PDFApprentice
             }
             // Update title through save status (as a side effect)
             UpdateSaveStatus(SaveStatus.Saved);
+            // Reset scale
+            PDF.Scale = 1.0;
         }
         private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
             => e.CanExecute = IsPDFAvailable();

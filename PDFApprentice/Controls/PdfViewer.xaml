@@ -5,9 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PDFApprentice.Controls"
              mc:Ignorable="d" MouseDoubleClick="PdfViewer_MouseDoubleClick"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" PreviewMouseWheel="UserControl_PreviewMouseWheel"
+             DataContext="{Binding RelativeSource={RelativeSource self}}">
     <ScrollViewer PanningMode="Both"
                 Background="DarkGray">
-            <ItemsControl x:Name="PagesContainer"/>
-        </ScrollViewer>
+        <ItemsControl x:Name="PagesContainer">
+            <ItemsControl.LayoutTransform>
+                <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
+            </ItemsControl.LayoutTransform>
+        </ItemsControl>
+    </ScrollViewer>
 </UserControl>
