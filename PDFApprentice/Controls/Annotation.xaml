@@ -6,9 +6,9 @@
              xmlns:local="clr-namespace:PDFApprentice.Controls"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
-             Background="#327A7A7A"
+             Background="#327A7A7A" MaxWidth="550"
              DataContext="{Binding RelativeSource={RelativeSource self}}">
     <Grid>
-        <TextBlock Text="{Binding Note}"/>
+        <TextBlock Text="{Binding Note}" x:Name="NoteText" TextWrapping="Wrap"/>
     </Grid>
 </UserControl>

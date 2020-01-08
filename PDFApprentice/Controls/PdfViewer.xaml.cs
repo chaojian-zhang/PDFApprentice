@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -205,7 +206,7 @@ namespace PDFApprentice.Controls
                     },
                     OwnerPage = CurrentImage.PageID
                 };
-                var annotation = CreateAnnotation(canvas, entity);
+                Annotation annotation = CreateAnnotation(canvas, entity);
                 // Show annotation property
                 ShowAnnotationProperty(annotation, null);
                 // Indicate file unsaved
@@ -216,6 +217,13 @@ namespace PDFApprentice.Controls
         {
             if(PropertyWindow != null && sender is Annotation)
             {
+                // Format old annotation
+                if(PropertyWindow.GetAnnotation() != null)
+                {
+                    var annotation = PropertyWindow.GetAnnotation();
+                    SimpleFormatText(annotation.NoteText.Inlines, annotation.Note);
+                }
+                // Show new annotation
                 PropertyWindow.SetAnnotation(sender as Annotation);
                 PropertyWindow.Show();
                 PropertyWindow.Owner = Window.GetWindow(this);
@@ -224,6 +232,78 @@ namespace PDFApprentice.Controls
         #endregion
 
         #region Subroutine
+        enum ParseState
+        {
+            NormalText,
+            BoldStart,
+            ItalicStart
+        }
+        /// <summary>
+        /// Simple format Markdown text for TextBlock
+        /// </summary>
+        private void SimpleFormatText(InlineCollection inlines, string note)
+        {
+            inlines.Clear();
+            // Only bold and italic is supported for now
+            StringBuilder builder = new StringBuilder();
+            ParseState state = ParseState.NormalText;
+            for (int i = 0; i < note.Length; i++)
+            {
+                char c = note[i];
+                switch (state)
+                {
+                    case ParseState.NormalText:
+                        {
+                            if (c != '*')
+                                builder.Append(c);
+                            // Make sure we have something to come
+                            else if (i < note.Length - 1)
+                            {
+                                // Bold
+                                if (note[i + 1] == '*')
+                                {
+                                    i++; 
+                                    state = ParseState.BoldStart;
+                                }
+                                else
+                                    state = ParseState.ItalicStart;
+                                // Save current
+                                inlines.Add(builder.ToString());
+                                builder.Clear();
+                            }
+                        }
+                        break;
+                    case ParseState.BoldStart:
+                        {
+                            if (c != '*')
+                                builder.Append(c);
+                            else
+                            {
+                                i++;    // Assume complete
+                                inlines.Add(new Bold(new Run(builder.ToString())));
+                                builder.Clear();
+                                state = ParseState.NormalText;
+                            }
+                        }
+                        break;
+                    case ParseState.ItalicStart:
+                        {
+                            if (c != '*')
+                                builder.Append(c);
+                            else
+                            {
+                                inlines.Add(new Italic(new Run(builder.ToString())));
+                                builder.Clear();
+                                state = ParseState.NormalText;
+                            }
+                        }
+                        break;
+                }
+            }
+            // Add remaining text
+            if(builder.Length != 0)
+                inlines.Add(builder.ToString());            
+        }
         private async static Task PdfToImages(PdfViewer pdfViewer, PdfDocument pdfDoc)
         {
             ItemCollection items = pdfViewer.PagesContainer.Items;
@@ -276,7 +356,9 @@ namespace PDFApprentice.Controls
                     foreach (var entity in entities)
                     {
                         Canvas canvas = pdfViewer.PagesContainer.Items.GetItemAt((int)(entity.OwnerPage)) as Canvas;
-                        pdfViewer.CreateAnnotation(canvas, entity);
+                        var annotation = pdfViewer.CreateAnnotation(canvas, entity);
+                        // Format
+                        pdfViewer.SimpleFormatText(annotation.NoteText.Inlines, annotation.Note);
                     }
                 }
             }

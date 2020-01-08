@@ -113,6 +113,8 @@ namespace PDFApprentice
             UpdateSaveStatus(SaveStatus.Saved);
             // Reset scale
             PDF.Scale = 1.0;
+            // Reset annotation property window
+            PropertyWindow.SetAnnotation(null);
         }
         private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
             => e.CanExecute = IsPDFAvailable();

@@ -32,6 +32,11 @@ namespace PDFApprentice.Controls
 
         #region Method
         private Annotation Annotation { get; set; }
+        /// <summary>
+        /// Get annotation for reference purpose
+        /// </summary>
+        internal Annotation GetAnnotation()
+            => Annotation;
         public void SetAnnotation(Annotation annotation)
         {
             Annotation = annotation;
