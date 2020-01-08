@@ -151,7 +151,8 @@ namespace PDFApprentice
                 .OrderBy(en => en.OwnerPage))
             {
                 // Concatenate lines with a single space
-                string content = entity.Content.Replace(Environment.NewLine, " ");
+                string content = entity.Content.Replace(Environment.NewLine, " ")
+                    .Replace("\n", " ");    // For saved then loaded entities the line ending is already normalized
                 builder.AppendLine($"* {(string.IsNullOrWhiteSpace(entity.Tags) ? string.Empty : $"({entity.Tags}) ")}{content}");
             }
             // Save
