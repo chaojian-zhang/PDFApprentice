@@ -17,7 +17,7 @@ None.
 **Future Features**
 
 1. Allow arbitary taggable page-level Ink Canvas to be associated with each page (for **highlight**, sketch and draft purpose, not for annotation purpose per-se, thus the whole thing is managed as a single entity).
-2. (Usability) Add configuration to configure next-open image size (mostly width); Also we might need horizontal scroll bar for items container
+2. (Usability) Add configuration to configure next-open image size (mostly width) - or instead to save memory we should still use fixed width as currently set and allow zooming; Also we might need horizontal scroll bar for items container
 4. (UI) Annotation property window notes text input should have a max width so horizontal scroll bar can show;
 5. (UI) Add deliberate max width to annotation widget (e.g. 500 px).
 
