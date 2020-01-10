@@ -12,7 +12,7 @@ This program serves one single purpose: provides a **simple way** to add annotat
 
 **Current**
 
-None.
+1. (bug) It seems every time we open a new PDF, old images are not cleared.
 
 **Future Features**
 
