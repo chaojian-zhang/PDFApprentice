@@ -20,6 +20,7 @@ This program serves one single purpose: provides a **simple way** to add annotat
 2. (Usability) Add configuration to configure next-open image size (mostly width) - or instead to save memory we should still use fixed width as currently set and allow zooming; Also we might need horizontal scroll bar for items container
 4. (UI) Annotation property window notes text input should have a max width so horizontal scroll bar can show;
 5. (UI) Add deliberate max width to annotation widget (e.g. 500 px).
+6. (Issue) Current solution certainly doens't handle large PDFs well (e.g. Java the complete reference). Well we may simply don't bother with this.
 
 **Implemented/Solved**
 
