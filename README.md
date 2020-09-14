@@ -21,6 +21,7 @@ This program serves one single purpose: provides a **simple way** to add annotat
 4. (UI) Annotation property window notes text input should have a max width so horizontal scroll bar can show;
 5. (UI) Add deliberate max width to annotation widget (e.g. 500 px).
 6. (Issue) Current solution certainly doens't handle large PDFs well (e.g. Java the complete reference). Well we may simply don't bother with this.
+7. (Important) Add a "Summary" window showing all notes created so far, and most importantly, enable jumping to specific pages by clicking on the note preview in a list view. Just like how VideoTagPlayer works. This enables quick "page marking" style annotation.
 
 **Implemented/Solved**
 
