@@ -145,6 +145,16 @@ namespace PDFApprentice.Controls
             // Delete from collection
             Annotations.Remove(annotation);
         }
+        internal void Navigate(uint page)
+        {
+            double offset = 0;
+            for (int i = 0; i < page && i < PagesContainer.Items.Count; i++)
+            {
+                double itemHeight = (PagesContainer.Items[i] as Canvas).ActualHeight + 4;
+                offset += itemHeight;
+            }
+            Scroll.ScrollToVerticalOffset(offset);
+        }
         #endregion
 
         #region Events

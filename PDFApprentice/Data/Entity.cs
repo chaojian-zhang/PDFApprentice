@@ -8,15 +8,15 @@ namespace PDFApprentice.Data
 {
     public struct Location
     {
-        public int X;
-        public int Y;
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 
     public class Entity
     {
-        public string Content;
-        public string Tags;
-        public Location Location;
-        public uint OwnerPage;
+        public string Content { get; set; }
+        public string Tags { get; set; }
+        public Location Location { get; set; }
+        public uint OwnerPage { get; set; }
     }
 }

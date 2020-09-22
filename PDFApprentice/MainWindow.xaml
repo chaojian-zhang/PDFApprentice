@@ -5,14 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PDFApprentice"
         xmlns:controls="clr-namespace:PDFApprentice.Controls"
-        mc:Ignorable="d" Closing="Window_Closing"
-        Title="PDF Apprentice" Height="768" Width="1024">
+        mc:Ignorable="d" Closing="Window_Closing" AllowDrop="True"
+        Title="PDF Apprentice" Height="768" Width="1024"
+        Drop="Window_Drop">
     <Window.CommandBindings>
         <CommandBinding Command="Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed"/>
         <CommandBinding Command="Save" CanExecute="SaveCommand_CanExecute" Executed="SaveCommand_Executed" />
         <CommandBinding Command="Close" CanExecute="ExitCommand_CanExecute" Executed="ExitCommand_Executed"/>
         <CommandBinding Command="local:PDFApprenticeCommands.Export" CanExecute="ExportCommand_CanExecute" Executed="ExportCommand_Executed"/>
         <CommandBinding Command="local:PDFApprenticeCommands.Statistics" CanExecute="StatisticsCommand_CanExecute" Executed="StatisticsCommand_Executed"/>
+        <CommandBinding Command="local:PDFApprenticeCommands.Summary" CanExecute="SummaryCommand_CanExecute" Executed="SummaryCommand_Executed"/>
     </Window.CommandBindings>
     <DockPanel>
         <Menu DockPanel.Dock="Top">
@@ -24,6 +26,7 @@
             </MenuItem>
             <MenuItem Header="_Data">
                 <MenuItem Header="_Statistics" Command="local:PDFApprenticeCommands.Statistics"/>
+                <MenuItem Header="Summary" Command="local:PDFApprenticeCommands.Summary"/>
                 <MenuItem Header="_Export" Command="local:PDFApprenticeCommands.Export"/>
             </MenuItem>
         </Menu>

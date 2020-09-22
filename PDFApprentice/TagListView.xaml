@@ -1,0 +1,28 @@
+﻿<Window x:Class="PDFApprentice.TagListView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PDFApprentice"
+        mc:Ignorable="d"
+        Title="TagListView" Height="450" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource self}}">
+    <Grid>
+        <ListView ItemsSource="{Binding Entities}">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel>
+                        <Label Content="{Binding OwnerPage}"/>
+                        <Label Content="{Binding Tags}"/>
+                        <TextBlock Text="{Binding Content}" MaxWidth="300" TextWrapping="WrapWithOverflow"/>
+                    </DockPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListViewItem_PreviewMouseLeftButtonDown" />
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+</Window>

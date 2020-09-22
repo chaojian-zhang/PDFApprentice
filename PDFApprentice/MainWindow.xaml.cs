@@ -58,6 +58,8 @@ namespace PDFApprentice
             }
             CurrentSaveStatus = status;
         }
+        internal void Navigate(uint page)
+            => PDF.Navigate(page);
         #endregion
 
         #region Events
@@ -83,38 +85,31 @@ namespace PDFApprentice
             PropertyWindow.ShouldReallyClose = true;
             PropertyWindow.Close();
         }
+        private void Window_Drop(object sender, DragEventArgs e)
+        {
+            // If the DataObject contains string data, extract it.
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string filePath = (e.Data.GetData(DataFormats.FileDrop) as IEnumerable<string>).First();
+
+                // If the string is a file, open it
+                if(File.Exists(filePath))
+                    TryReopenFile(filePath);
+            }
+        }
         private void OpenCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
             => e.CanExecute = true;
         private void OpenCommand_Executed(object sender, ExecutedRoutedEventArgs e)
         {
-            // Show warning of unsaved progress
-            if (CurrentSaveStatus == SaveStatus.Unsaved)
-            {
-                var result = MessageBox.Show("There are unsaved annotations. Would you like to make a save first?\n" +
-                    "Click Yes to save before open new file, \n" +
-                    "Click No to discard unsaved annotations, \n" +
-                    "Click Cancel to cancel opening.",
-                    "Confirmation", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
-                if (result == MessageBoxResult.Cancel)
-                    return;
-                else if (result == MessageBoxResult.Yes)
-                    SaveCommand_Executed(null, null);
-            }
-
             // Select and open file
             OpenFileDialog dialog = new OpenFileDialog();
             dialog.Filter = "PDF files (*.pdf)|*.pdf|All files (*.*)|*.*";
             if (dialog.ShowDialog() == true)
             {
                 string filePath = dialog.FileName;
-                PDF.PdfPath = filePath;
+                // Open file
+                TryReopenFile(filePath);
             }
-            // Update title through save status (as a side effect)
-            UpdateSaveStatus(SaveStatus.Saved);
-            // Reset scale
-            PDF.Scale = 1.0;
-            // Reset annotation property window
-            PropertyWindow.SetAnnotation(null);
         }
         private void SaveCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
             => e.CanExecute = IsPDFAvailable();
@@ -164,9 +159,44 @@ namespace PDFApprentice
             // Open export file
             System.Diagnostics.Process.Start(exportPath);
         }
+        private void SummaryCommand_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        => e.CanExecute = IsPDFAvailable();
+
+        private void SummaryCommand_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var popUp = new TagListView() { Owner = this };
+            popUp.Entities = new System.Collections.ObjectModel.ObservableCollection<Entity>(PDF.Annotations.Select(a => a.GetEntity()));
+            popUp.Show();
+        }
         #endregion
 
         #region Subroutine
+        private void TryReopenFile(string filePath)
+        {
+            // Show warning of unsaved progress
+            if (CurrentSaveStatus == SaveStatus.Unsaved)
+            {
+                var result = MessageBox.Show("There are unsaved annotations. Would you like to make a save first?\n" +
+                    "Click Yes to save before open new file, \n" +
+                    "Click No to discard unsaved annotations, \n" +
+                    "Click Cancel to cancel opening.",
+                    "Confirmation", MessageBoxButton.YesNoCancel, MessageBoxImage.Information);
+                if (result == MessageBoxResult.Cancel)
+                    return;
+                else if (result == MessageBoxResult.Yes)
+                    SaveCommand_Executed(null, null);
+            }
+
+            // Update path
+            PDF.PdfPath = filePath;
+
+            // Update title through save status (as a side effect)
+            UpdateSaveStatus(SaveStatus.Saved);
+            // Reset scale
+            PDF.Scale = 1.0;
+            // Reset annotation property window
+            PropertyWindow.SetAnnotation(null);
+        }
         private bool IsPDFAvailable()
             => PDF.PdfPath != null;
         private string GetPDFName()

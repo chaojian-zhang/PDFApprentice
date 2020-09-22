@@ -55,8 +55,7 @@ namespace PDFApprentice.Controls
             => Entity.Location;
         internal void UpdateLocation(int x, int y)
         {
-            Entity.Location.X = x;
-            Entity.Location.Y = y;
+            Entity.Location = new Location() { X = x, Y = y };
             Canvas.SetLeft(this, x);
             Canvas.SetTop(this, y);
         }

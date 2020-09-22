@@ -7,7 +7,7 @@
              mc:Ignorable="d" MouseDoubleClick="PdfViewer_MouseDoubleClick"
              d:DesignHeight="300" d:DesignWidth="300" PreviewMouseWheel="UserControl_PreviewMouseWheel"
              DataContext="{Binding RelativeSource={RelativeSource self}}">
-    <ScrollViewer PanningMode="Both"
+    <ScrollViewer x:Name="Scroll" PanningMode="Both"
                 Background="DarkGray">
         <ItemsControl x:Name="PagesContainer">
             <ItemsControl.LayoutTransform>
