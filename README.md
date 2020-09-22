@@ -14,6 +14,8 @@ This program serves one single purpose: provides a **simple way** to add annotat
 
 1. (bug) It seems every time we open a new PDF, old images are not cleared.
 2. (issue) If user saves a large PDF immediately when she opens it without letting it load all the pages, in which case annotations didn't get a chance to be loaded yet, that will save a blank annotation file, effectively overwriting and clearing all existing annotations.
+3. (Bug) Currently from "Note Summary" window jump navigation doesn't respect zoom, i.e. it will jump to incorrect location.
+4. (Issue) Note Summary window display should be sorted by page number. Currently it's sorted by order of note creation.
 
 **Future Features**
 
