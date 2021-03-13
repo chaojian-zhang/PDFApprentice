@@ -7,6 +7,7 @@
         xmlns:controls="clr-namespace:PDFApprentice.Controls"
         mc:Ignorable="d" Closing="Window_Closing" AllowDrop="True"
         Title="PDF Apprentice" Height="768" Width="1024"
+        Loaded="Window_Loaded"
         Drop="Window_Drop">
     <Window.CommandBindings>
         <CommandBinding Command="Open" CanExecute="OpenCommand_CanExecute" Executed="OpenCommand_Executed"/>

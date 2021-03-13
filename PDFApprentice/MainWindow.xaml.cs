@@ -63,6 +63,15 @@ namespace PDFApprentice
         #endregion
 
         #region Events
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            if(args.Length >= 2 && File.Exists(args[1]) && System.IO.Path.GetExtension(args[1]).ToLower() == ".pdf")
+            {
+                // Open file
+                TryReopenFile(args[1]);
+            }
+        }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             // Show warning of unsaved progress
