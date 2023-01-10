@@ -4,11 +4,11 @@ Uses **Windows 10 APIs** to render a PDF Document as **image** in WPF, planned t
 
 This program serves one single purpose: provides a **simple way** to add annotations to PDFs and allow **data interoperation**, as such it doesn't intend to have any heavy-weight functionalities. The annotations are saved as an external metadata file with the same name as the PDF in YAML format; It supports direct export to KMD format. This program can be used as part of a process along the *personal note/data management pipeline*.
 
-# Screenshot
+## Screenshot
 
 ![Screenshot of Interface](Documentations/Screenshot_of_Interface.png)
 
-# Task List
+## Task List
 
 **Current**
 
@@ -35,12 +35,12 @@ This program serves one single purpose: provides a **simple way** to add annotat
 4. (Export, format) Export into Knowledge Markdown plain text.
 5. (UI) Don't show Annotation Properties window in Taskbar.
 
-# Terminology
+## Terminology
 
 1. Entity: All annotations, be it texts for inks, are defines as an **entity**. Each entity can contain some meta data besides its main content. All entities are confined to a particular **page**.
 2. Page: Each PDF document consists of multiple pages; Page is the smallest container for information.
 
-# Repository Setup
+## Repository Setup
 
 Due to difference in Windows SDK installation paths new checkouts need to setup corresponding paths to two assemblies:
 
@@ -49,8 +49,12 @@ Due to difference in Windows SDK installation paths new checkouts need to setup 
 
 Additional details is available in Lander Verhack's [post](https://blogs.u2u.be/lander/post/2018/01/23/Creating-a-PDF-Viewer-in-WPF-using-Windows-10-APIs).
 
-# Icon Credit
+## Icon Credit
 
 ![Icon](PDFApprentice/pdf.ico)
 
 Icon made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
+
+## Alternatives
+
+* Use [SumatraPDF](https://www.sumatrapdfreader.org/free-pdf-reader) with the only issue that you can't export your annotations.
